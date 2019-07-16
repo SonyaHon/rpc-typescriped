@@ -20,3 +20,4 @@ default: true
 * Default middlewares
 * Sending different types of data, create mods to send them
 * Sessions mechanism
+* Google Chrome extensions for easy debugging
