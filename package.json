@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "docs": "./node_modules/.bin/md-docs ./docs --port 9999"
   },
   "author": "",
   "license": "ISC",
