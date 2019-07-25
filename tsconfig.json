@@ -2,14 +2,15 @@
 	"compilerOptions": {
 		"module"   : "commonjs",
 		"target"   : "es5",
-		"sourceMap": true
+		"sourceMap": true,
+		"esModuleInterop": true
 	},
 	"include"        : [
 		"api.node.ts",
-		"api.web.ts"
+		"api.web.ts",
+		"src/**/*"
 	],
 	"exclude"        : [
 		"node_modules"
 	]
 }
-`

@@ -1,7 +1,0 @@
-class Server {
-
-}
-
-export {
-	Server
-}

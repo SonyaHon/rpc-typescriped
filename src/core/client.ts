@@ -1,9 +1,9 @@
-import {CLIENT, CLIENT_PACKET, createRequestPacket, createRespondPacket, IRequestPacketUnwrapped, IRespondPacket, SERVER_PACKET} from "./utls";
-import {Socket} from "socket.io";
+import {CLIENT, CLIENT_PACKET, createRequestPacket, createRespondPacket, IRequestPacketUnwrapped, IRespondPacket, SERVER_PACKET} from "../lib/utls";
+import {UniversalSocket} from "../lib/universal-socket";
 import Timeout = NodeJS.Timeout;
 
 export interface IClientProps {
-	socket: Socket,
+	socket: UniversalSocket,
 	failTimeout?: number
 }
 
@@ -22,7 +22,7 @@ export enum EMiddlewareType {
 	ON_REGISTER
 }
 
-interface IMiddlewares {
+export interface IMiddlewaresClient {
 	[EMiddlewareType.BEFORE_FIRE]: Function[],
 	[EMiddlewareType.AFTER_FIRE]: Function[],
 	[EMiddlewareType.ON_RECEIVE]: Function[],
@@ -34,12 +34,11 @@ interface IMiddlewares {
 
 export class Client {
 
-	private socket: Socket;
+	private socket: UniversalSocket;
 	private readonly failTimeout: number;
 
 	registeredCallbacks: object;
-
-	private readonly middlewares: IMiddlewares;
+	private readonly middlewares: IMiddlewaresClient;
 
 	constructor(props: IClientProps) {
 		this.socket = props.socket;
@@ -59,7 +58,7 @@ export class Client {
 			await this._setupIncomingPacketHandler(packet);
 		});
 
-		this.socket.on('connect', async () => {
+		this.socket.onConnect(async () => {
 			let shouldBreak = false;
 			let $break = () => {
 				shouldBreak = true;
@@ -67,14 +66,13 @@ export class Client {
 			for (const md of this.middlewares[EMiddlewareType.ON_CONNECTION]) {
 				await md($break);
 				if (shouldBreak) {
-					// @ts-ignore
 					this.socket.close();
 					break;
 				}
 			}
 		});
 
-		this.socket.on('disconnect', async () => {
+		this.socket.onDisconnect(async () => {
 			for (const md of this.middlewares[EMiddlewareType.ON_DISCONNECTION]) {
 				await md();
 			}
@@ -164,7 +162,6 @@ export class Client {
 	}
 
 	private async _setupIncomingPacketHandler(packet: IRequestPacketUnwrapped) {
-
 		let shouldBreak = false;
 		let nPacket = undefined;
 		let $break = () => {
@@ -195,7 +192,6 @@ export class Client {
 			const res: any = await this.registeredCallbacks[packet.eventName](...packet.args);
 			resultPacket = createRespondPacket(packet.id, true, null, res);
 			this.socket.emit(`${packet.id}`, resultPacket)
-
 		} catch (e) {
 			resultPacket = createRespondPacket(packet.id, false, e.message, null);
 			this.socket.emit(`${packet.id}`, resultPacket)
@@ -205,5 +201,4 @@ export class Client {
 			}
 		}
 	}
-
 }

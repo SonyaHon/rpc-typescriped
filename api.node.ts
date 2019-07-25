@@ -1,5 +1,5 @@
-import {Server} from './src/server'
-import {Client} from './src/client'
+import {Server} from './src/core/server'
+import {Client} from './src/core/client'
 
 export {
 	Server,

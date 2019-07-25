@@ -4,16 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "docs": "./node_modules/.bin/md-docs ./docs --port 9999"
+    "docs": "./node_modules/.bin/md-docs ./docs --port 9999",
+    "build": "./node_modules/.bin/tsc",
+    "server": "./node_modules/.bin/ts-node ./playround/server.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/socket.io": "^2.1.2",
+    "express": "^4.17.1",
     "md-docs": "^0.1.1",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0",
     "socket.io-msgpack-parser": "^2.2.0",
+    "ts-node": "^8.0.3",
     "typescript": "^3.5.3",
     "uuid": "^3.3.2"
   }
